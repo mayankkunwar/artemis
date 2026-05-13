@@ -750,6 +750,15 @@
             </plugins>
          </build>
       </profile>
+      <profile>
+         <id>jdk22-plus</id>
+         <activation>
+            <jdk>[22,)</jdk>
+         </activation>
+         <modules>
+            <module>artemis-ffm</module>
+         </modules>
+      </profile>
    </profiles>
 
    <build>
