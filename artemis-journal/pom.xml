@@ -91,5 +91,24 @@
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.apache.artemis</groupId>
+         <artifactId>artemis-ffm</artifactId>
+         <version>${project.version}</version>
+         <scope>compile</scope>
+      </dependency>
    </dependencies>
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>22</source>
+               <target>22</target>
+               <release>22</release>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>
