@@ -69,7 +69,7 @@ import static org.apache.artemis.nativo.jlibaio.ffm.IOCBInit.IOCB_LAYOUT_SIZE;
 import static org.apache.artemis.nativo.jlibaio.ffm.IOEvent.IO_EVENT_LAYOUT;
 import static org.apache.artemis.nativo.jlibaio.ffm.Stat.STAT_LAYOUT;
 
-public class FFMNativeHelper<Callback extends SubmitInfo> {
+public class FFMNativeHelper<Callback extends SubmitInfo> implements NativeHelper<Callback> {
 
    private static final Logger logger = LoggerFactory.getLogger(FFMNativeHelper.class);
 
@@ -434,7 +434,7 @@ public class FFMNativeHelper<Callback extends SubmitInfo> {
       }
    }
 
-   public void deleteContext(IOControl ioControl) {
+   public void deleteContext(IOControl<Callback> ioControl) {
       if (ioControl == null) {
          if (logger.isDebugEnabled()) {
             logger.debug("deleteContext: null ioControl");
@@ -645,7 +645,7 @@ public class FFMNativeHelper<Callback extends SubmitInfo> {
    }
 
    public void submitWrite(int fd,
-                           IOControl ioControl,
+                           IOControl<Callback> ioControl,
                            long position,
                            int size,
                            ByteBuffer bufferWrite,
@@ -708,7 +708,7 @@ public class FFMNativeHelper<Callback extends SubmitInfo> {
    }
 
    public void submitRead(int fd,
-                          IOControl ioControl,
+                          IOControl<Callback> ioControl,
                           long position,
                           int size,
                           ByteBuffer bufferWrite,

@@ -18,6 +18,8 @@ package org.apache.artemis.nativo.jlibaio;
 
 import org.apache.artemis.nativo.jlibaio.ffm.FFMNativeHelper;
 import org.apache.artemis.nativo.jlibaio.ffm.IOControl;
+import org.apache.artemis.nativo.jlibaio.ffm.IoUringNativeHelper;
+import org.apache.artemis.nativo.jlibaio.ffm.NativeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,7 +145,7 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
 
    final boolean useFdatasync;
 
-   final FFMNativeHelper<Callback> ffmNativeHelper;
+   final NativeHelper<Callback> ffmNativeHelper;
 
    /**
     * The queue size here will use resources defined on the kernel parameter
@@ -156,12 +158,31 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
     */
    public LibaioContext(int queueSize, boolean useSemaphore, boolean useFdatasync) {
       try {
-         this.ffmNativeHelper = new FFMNativeHelper<>(this::releaseSemaphore);
+         String backend = System.getProperty("artemis.ffm.backend", "libaio");
+         NativeHelper<Callback> helper;
+         if ("iouring".equalsIgnoreCase(backend)) {
+            NativeHelper<Callback> localHelper;
+            try {
+               localHelper = new IoUringNativeHelper<>();
+               // Test initialization with small queue to verify support early
+               IOControl<Callback> testContext = localHelper.newContext(1);
+               localHelper.deleteContext(testContext);
+               helper = localHelper;
+            } catch (Throwable t) {
+               logger.warn("Failed to initialize requested backend 'iouring'. Falling back to 'libaio'. Reason: {}", t.getMessage());
+               helper = new FFMNativeHelper<>(this::releaseSemaphore);
+            }
+         } else {
+            helper = new FFMNativeHelper<>(this::releaseSemaphore);
+         }
+         this.ffmNativeHelper = helper;
          contexts.incrementAndGet();
          this.ioContext = newContext(queueSize);
          this.useFdatasync = useFdatasync;
       } catch (Exception e) {
          throw e;
+      } catch (Throwable t) {
+         throw new RuntimeException(t);
       }
       this.queueSize = queueSize;
       totalMaxIO.addAndGet(queueSize);
@@ -365,7 +386,7 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
    /**
     * Internal method to be used when closing the controller.
     */
-   private void deleteContext(IOControl ioControl) {
+   private void deleteContext(IOControl<Callback> ioControl) {
       this.ffmNativeHelper.deleteContext(ioControl);
    }
 
@@ -410,11 +431,11 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
     * Documented at {@link LibaioFile#write(long, int, ByteBuffer, SubmitInfo)}.
     */
    void submitWrite(int fd,
-                    IOControl ioControl,
-                    long position,
-                    int size,
-                    ByteBuffer bufferWrite,
-                    Callback callback) throws IOException {
+                   IOControl<Callback> ioControl,
+                   long position,
+                   int size,
+                   ByteBuffer bufferWrite,
+                   Callback callback) throws IOException {
       this.ffmNativeHelper.submitWrite(fd, ioControl, position, size, bufferWrite, callback);
    }
 
@@ -422,7 +443,7 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
     * Documented at {@link LibaioFile#read(long, int, ByteBuffer, SubmitInfo)}.
     */
    void submitRead(int fd,
-                   IOControl ioControl,
+                   IOControl<Callback> ioControl,
                    long position,
                    int size,
                    ByteBuffer bufferWrite,
@@ -436,7 +457,7 @@ public class LibaioContext<Callback extends SubmitInfo> implements Closeable {
     * <p/>
     * The callbacks will include the original callback sent at submit (read or write).
     */
-   int poll(IOControl ioControl, Callback[] callbacks, int min, int max) {
+   int poll(IOControl<Callback> ioControl, Callback[] callbacks, int min, int max) {
       return this.ffmNativeHelper.poll(ioControl, callbacks, min, max);
    }
 

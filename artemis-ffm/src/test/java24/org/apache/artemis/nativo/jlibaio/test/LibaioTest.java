@@ -62,9 +62,14 @@ public class LibaioTest {
          boolean failed = false;
          try (LibaioContext control = new LibaioContext<>(1, true, true); LibaioFile fileDescriptor = control.openFile(file, true)) {
             fileDescriptor.fallocate(4 * 1024);
-         } catch (Exception e) {
-            e.printStackTrace();
-            failed = true;
+         } catch (Throwable e) {
+            String backend = System.getProperty("artemis.ffm.backend", "libaio");
+            if ("libaio".equals(backend)) {
+               e.printStackTrace();
+               failed = true;
+            } else {
+               throw new RuntimeException("Requested backend " + backend + " failed to initialize", e);
+            }
          }
 
          Assume.assumeFalse("There is not enough support to libaio", failed);
@@ -86,13 +91,24 @@ public class LibaioTest {
 
    @Before
    public void setUpFactory() {
-      control = new LibaioContext<>(LIBAIO_QUEUE_SIZE, true, true);
+      try {
+         control = new LibaioContext<>(LIBAIO_QUEUE_SIZE, true, true);
+      } catch (Throwable t) {
+         String backend = System.getProperty("artemis.ffm.backend", "libaio");
+         if ("libaio".equals(backend)) {
+            Assume.assumeNoException("There is not enough support to libaio", t);
+         } else {
+            throw new RuntimeException("Requested backend " + backend + " failed to initialize", t);
+         }
+      }
    }
 
    @After
    public void deleteFactory() {
-      control.close();
-      validateLibaio();
+      if (control != null) {
+         control.close();
+         validateLibaio();
+      }
    }
 
    public void validateLibaio() {

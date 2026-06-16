@@ -71,6 +71,11 @@
             <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.davidvlijmincx.lio</groupId>
+            <artifactId>JUring</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <profiles>

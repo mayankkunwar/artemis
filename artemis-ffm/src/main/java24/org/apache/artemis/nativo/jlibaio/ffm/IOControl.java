@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.foreign.MemorySegment;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
@@ -33,12 +35,14 @@ public class IOControl<Callback extends SubmitInfo> {
 
    private MemorySegment ioContext;
    private MemorySegment events;
+   private Object customContext;
    private int queueSize;
    private int iocbPut;
    private int iocbGet;
    private int used;
    private MemorySegment[] iocbPool;
    private AtomicReferenceArray<Callback> callbackRegistry;
+   private final Map<Long, Callback> userDataCallbacks = new ConcurrentHashMap<>();
 
    // -1: delete, 0: free, 1: used
    private AtomicIntegerArray iocbState;
@@ -57,6 +61,14 @@ public class IOControl<Callback extends SubmitInfo> {
 
    public void setEvents(MemorySegment events) {
       this.events = events;
+   }
+
+   public Object getCustomContext() {
+      return customContext;
+   }
+
+   public void setCustomContext(Object customContext) {
+      this.customContext = customContext;
    }
 
    public int queueSize() {
@@ -98,6 +110,14 @@ public class IOControl<Callback extends SubmitInfo> {
 
    public Callback takeCallback(int idx) {
       return callbackRegistry.getAndSet(idx, null);
+   }
+
+   public void addUserDataCallback(long id, Callback callback) {
+      userDataCallbacks.put(id, callback);
+   }
+
+   public Callback takeUserDataCallback(long id) {
+      return userDataCallbacks.remove(id);
    }
 
    public AtomicIntegerArray getIocbState() {

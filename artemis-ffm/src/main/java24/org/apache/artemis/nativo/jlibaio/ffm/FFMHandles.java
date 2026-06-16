@@ -89,6 +89,10 @@ public class FFMHandles {
    static final MethodHandle POSIX_MEMALIGN_HANDLE = LINKER.downcallHandle(STDLIB.find("posix_memalign").orElseThrow(() -> new UnsatisfiedLinkError("posix_memalign not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.JAVA_LONG), Linker.Option.captureCallState("errno"));
 
    private static SymbolLookup setStdLib() {
+      String os = System.getProperty("os.name").toLowerCase();
+      if (!os.contains("linux")) {
+         return SymbolLookup.loaderLookup();
+      }
       String[] libcPaths = {"/lib64/libc.so.6", "/usr/lib64/libc.so.6", "/lib/x86_64-linux-gnu/libc.so.6", "libc.so.6"};
       for (String path : libcPaths) {
          try {
@@ -106,6 +110,9 @@ public class FFMHandles {
    }
 
    private static SymbolLookup setLibaio() {
+      if (!System.getProperty("os.name").toLowerCase().contains("linux")) {
+         return SymbolLookup.loaderLookup();
+      }
       String[] paths = {System.getProperty("libaio.path"), "/usr/lib64/libaio.so.1", "/usr/lib/x86_64-linux-gnu/libaio.so.1", "/lib64/libaio.so.1", "/usr/lib/libaio.so.1", "libaio.so.1"};
       for (String path : paths) {
          if (path != null && !path.isEmpty()) {
