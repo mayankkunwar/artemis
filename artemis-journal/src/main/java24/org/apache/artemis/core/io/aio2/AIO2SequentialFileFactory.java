@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.activemq.artemis.core.io.aio2;
+package org.apache.artemis.core.io.aio2;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +35,12 @@ import org.apache.activemq.artemis.core.io.IOCallback;
 import org.apache.activemq.artemis.core.io.IOCriticalErrorListener;
 import org.apache.activemq.artemis.core.io.SequentialFile;
 import org.apache.activemq.artemis.journal.ActiveMQJournalLogger;
-import org.apache.artemis.nativo.jlibaio.LibaioContext;
-import org.apache.artemis.nativo.jlibaio.LibaioFile;
-import org.apache.artemis.nativo.jlibaio.SubmitInfo;
 import org.apache.activemq.artemis.utils.ByteUtil;
 import org.apache.activemq.artemis.utils.PowerOf2Util;
 import org.apache.activemq.artemis.utils.critical.CriticalAnalyzer;
+import org.apache.artemis.nativo.jlibaio.LibaioContext;
+import org.apache.artemis.nativo.jlibaio.LibaioFile;
+import org.apache.artemis.nativo.jlibaio.SubmitInfo;
 import org.jctools.queues.MpmcArrayQueue;
 import org.jctools.queues.atomic.MpmcAtomicArrayQueue;
 import org.slf4j.Logger;

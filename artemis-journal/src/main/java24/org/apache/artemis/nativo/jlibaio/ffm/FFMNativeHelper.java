@@ -17,6 +17,7 @@
 package org.apache.artemis.nativo.jlibaio.ffm;
 
 import org.apache.artemis.nativo.jlibaio.SubmitInfo;
+import org.apache.artemis.nativo.jlibaio.ffm.ReleaseCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

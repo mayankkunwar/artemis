@@ -407,11 +407,6 @@
          <artifactId>mockserver-core</artifactId>
          <scope>test</scope>
       </dependency>
-      <dependency>
-         <groupId>org.apache.artemis</groupId>
-         <artifactId>artemis-ffm</artifactId>
-         <scope>test</scope>
-      </dependency>
    </dependencies>
 
    <build>

@@ -168,11 +168,6 @@
          </dependency>
          <dependency>
             <groupId>org.apache.artemis</groupId>
-            <artifactId>artemis-ffm</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.apache.artemis</groupId>
             <artifactId>artemis-journal</artifactId>
             <version>${project.version}</version>
          </dependency>

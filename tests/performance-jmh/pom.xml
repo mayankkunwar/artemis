@@ -129,7 +129,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.artemis</groupId>
-                    <artifactId>artemis-ffm</artifactId>
+                    <artifactId>artemis-journal</artifactId>
                 </dependency>
             </dependencies>
             <build>

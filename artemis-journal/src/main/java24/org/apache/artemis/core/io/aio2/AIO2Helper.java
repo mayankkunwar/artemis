@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.activemq.artemis.core.io.aio2;
+package org.apache.artemis.core.io.aio2;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
@@ -27,17 +27,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * AIO2 helper for JDK less than version 24.
- * This version uses stub implementations that throw UnsupportedOperationException.
- * For JDK 24+, see the real implementation in src/main/java24.
+ * AIO2 helper for JDK 24+.
+ * This version uses the real AIO2SequentialFileFactory implementation with Panama FFM support.
+ * For JDK < 24, see the stub version in src/main/java24.
  */
 public class AIO2Helper {
 
    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
    public static boolean isSupported() {
-      logger.debug("AIO2Helper from earlier JDKs being used");
-      return false;
+      return AIO2SequentialFileFactory.isSupported();
    }
 
    public static long getTotalMaxIO() {
@@ -45,13 +44,23 @@ public class AIO2Helper {
    }
 
    public static SequentialFileFactory getAIO2SequentialFileFactory(File journalDir, int maxIO) {
-      return null;
+      try {
+         return new AIO2SequentialFileFactory(journalDir, maxIO);
+      } catch (UnsupportedOperationException | LinkageError e) {
+         logger.debug("AIO2 not available: {}", e.getMessage(), e);
+         return null;
+      }
    }
 
    public static SequentialFileFactory getAIO2SequentialFileFactory(File journalDir,
                                                                     IOCriticalErrorListener listener,
                                                                     int maxIO) {
-      return null;
+      try {
+         return new AIO2SequentialFileFactory(journalDir, listener, maxIO);
+      } catch (UnsupportedOperationException | LinkageError e) {
+         logger.debug("AIO2 not available: {}", e.getMessage(), e);
+         return null;
+      }
    }
 
    public static SequentialFileFactory getAIO2SequentialFileFactory(File journalDir,
@@ -59,7 +68,12 @@ public class AIO2Helper {
                                                                     int bufferTimeout,
                                                                     int maxIO,
                                                                     boolean logRates) {
-      return null;
+      try {
+         return new AIO2SequentialFileFactory(journalDir, bufferSize, bufferTimeout, maxIO, logRates);
+      } catch (UnsupportedOperationException | LinkageError e) {
+         logger.debug("AIO2 not available: {}", e.getMessage(), e);
+         return null;
+      }
    }
 
    public static SequentialFileFactory getAIO2SequentialFileFactory(File journalDir,
@@ -69,7 +83,12 @@ public class AIO2Helper {
                                                                     boolean logRates,
                                                                     IOCriticalErrorListener listener,
                                                                     CriticalAnalyzer analyzer) {
-      return null;
+      try {
+         return new AIO2SequentialFileFactory(journalDir, bufferSize, bufferTimeout, maxIO, logRates, listener, analyzer);
+      } catch (UnsupportedOperationException | LinkageError e) {
+         logger.debug("AIO2 not available: {}", e.getMessage(), e);
+         return null;
+      }
    }
 
 }
