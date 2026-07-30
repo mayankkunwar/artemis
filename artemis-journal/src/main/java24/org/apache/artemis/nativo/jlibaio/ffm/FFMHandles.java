@@ -39,14 +39,14 @@ public class FFMHandles {
 
    static final ReentrantLock oneMegaMutex = new ReentrantLock();
 
-   static final StructLayout CAPTURE_STATE_LAYOUT = Linker.Option.captureStateLayout();
-   static final VarHandle ERRNO_VH = CAPTURE_STATE_LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("errno"));
+   public static final StructLayout CAPTURE_STATE_LAYOUT = Linker.Option.captureStateLayout();
+   public static final VarHandle ERRNO_VH = CAPTURE_STATE_LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("errno"));
 
    private static final Linker.Option captureCallState = Linker.Option.captureCallState("errno");
 
-   static final MethodHandle WRITE_HANDLE = LINKER.downcallHandle(STDLIB.find("write").orElseThrow(() -> new UnsatisfiedLinkError("write not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG), captureCallState);
+   public static final MethodHandle WRITE_HANDLE = LINKER.downcallHandle(STDLIB.find("write").orElseThrow(() -> new UnsatisfiedLinkError("write not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG), captureCallState);
 
-   static final MethodHandle OPEN_HANDLE = LINKER.downcallHandle(STDLIB.find("open").orElseThrow(() -> new UnsatisfiedLinkError("open not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS,    // pathName
+   public static final MethodHandle OPEN_HANDLE = LINKER.downcallHandle(STDLIB.find("open").orElseThrow(() -> new UnsatisfiedLinkError("open not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS,    // pathName
                                                                                                                                                                                     ValueLayout.JAVA_INT,   // flags
                                                                                                                                                                                     ValueLayout.JAVA_INT), // mode
                                                                  captureCallState);
@@ -57,7 +57,7 @@ public class FFMHandles {
 
    static final MethodHandle FSYNC_HANDLE = LINKER.downcallHandle(STDLIB.find("fsync").orElseThrow(() -> new UnsatisfiedLinkError("fsync not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), captureCallState);
 
-   static final MethodHandle LSEEK_HANDLE = LINKER.downcallHandle(STDLIB.find("lseek").orElseThrow(() -> new UnsatisfiedLinkError("lseek not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT), captureCallState);
+   public static final MethodHandle LSEEK_HANDLE = LINKER.downcallHandle(STDLIB.find("lseek").orElseThrow(() -> new UnsatisfiedLinkError("lseek not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT), captureCallState);
 
    static final MethodHandle FSTAT_HANDLE = LINKER.downcallHandle(STDLIB.find("fstat").orElseThrow(() -> new UnsatisfiedLinkError("fstat not found in STDLIB")), FunctionDescriptor.of(ValueLayout.JAVA_INT,   // return
                                                                                                                                                                                        ValueLayout.JAVA_INT,    // fd

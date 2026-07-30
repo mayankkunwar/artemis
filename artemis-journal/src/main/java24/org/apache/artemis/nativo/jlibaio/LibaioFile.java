@@ -117,7 +117,7 @@ public final class LibaioFile<Callback extends SubmitInfo> implements AutoClosea
     * @param size the size of the buffer.
     * @return the buffer allocated.
     */
-   public MemorySegment newBuffer(int size) {
+   public ByteBuffer newBuffer(int size) {
       return LibaioContext.newAlignedBuffer(size, 4 * 1024);
    }
 

@@ -101,11 +101,9 @@ public class FFMLibaioBenchmarkTest {
       //one-time file initialization
       libaioFile.fallocate(BLOCK_SIZE * recordCount);
 
-      headerSegment = LibaioContext.newAlignedBuffer(BLOCK_SIZE, BLOCK_SIZE);
-      headerBuffer = headerSegment.asByteBuffer();
+      headerBuffer = LibaioContext.newAlignedBuffer(BLOCK_SIZE, BLOCK_SIZE);
 
-      recordSegment = LibaioContext.newAlignedBuffer(BLOCK_SIZE, BLOCK_SIZE);
-      recordBuffer = recordSegment.asByteBuffer();
+      recordBuffer = LibaioContext.newAlignedBuffer(BLOCK_SIZE, BLOCK_SIZE);
 
       initRecord(headerBuffer);   // filling the record clock with 1
       initRecord(recordBuffer);   // filling the record clock with 1
@@ -144,11 +142,11 @@ public class FFMLibaioBenchmarkTest {
       if (control != null) {
          control.close();
       }
-      if (headerSegment != null && headerSegment.address() != 0) {
-         LibaioContext.freeBuffer(headerSegment);
+      if (headerBuffer != null) {
+         LibaioContext.freeBuffer(headerBuffer);
       }
-      if (recordSegment != null && recordSegment.address() != 0) {
-         LibaioContext.freeBuffer(recordSegment);
+      if (recordBuffer != null) {
+         LibaioContext.freeBuffer(recordBuffer);
       }
       if (file != null) {
          file.delete();

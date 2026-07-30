@@ -47,8 +47,7 @@ public class OpenCloseContextTest {
 
    @Test
    public void testRepeatOpenCloseContext() throws Exception {
-      MemorySegment memorySegment = LibaioContext.newAlignedBuffer(512, 512);
-      ByteBuffer buffer = memorySegment.asByteBuffer();
+      ByteBuffer buffer = LibaioContext.newAlignedBuffer(512, 512);
       for (int i = 0; i < 512; i++) {
          buffer.put((byte) 'x');
       }
@@ -107,8 +106,7 @@ public class OpenCloseContextTest {
 
    @Test
    public void testRepeatOpenCloseContext2() throws Exception {
-      MemorySegment memorySegment = LibaioContext.newAlignedBuffer(512, 512);
-      ByteBuffer buffer = memorySegment.asByteBuffer();
+      ByteBuffer buffer = LibaioContext.newAlignedBuffer(512, 512);
       for (int i = 0; i < 512; i++) {
          buffer.put((byte) 'x');
       }

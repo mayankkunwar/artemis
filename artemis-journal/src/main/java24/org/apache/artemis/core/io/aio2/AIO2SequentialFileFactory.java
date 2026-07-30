@@ -192,7 +192,7 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
       final int alignedSize = calculateBlockSize(size);
 
       // The buffer on AIO has to be a multiple of getAlignment()
-      ByteBuffer buffer = LibaioContext.newAlignedBuffer(alignedSize, getAlignment()).asByteBuffer();
+      ByteBuffer buffer = LibaioContext.newAlignedBuffer(alignedSize, getAlignment());
 
       buffer.limit(size);
 
@@ -202,7 +202,7 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
    @Override
    public void releaseDirectBuffer(final ByteBuffer buffer) {
       buffer.clear();
-      LibaioContext.freeBuffer(MemorySegment.ofBuffer(buffer));
+      LibaioContext.freeBuffer(buffer);
    }
 
    @Override
@@ -238,13 +238,13 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
 
    @Override
    public ByteBuffer newNativeBuffer(int size, int alignment) {
-      return LibaioContext.newAlignedBuffer(size, alignment).asByteBuffer();
+      return LibaioContext.newAlignedBuffer(size, alignment);
    }
 
 
    @Override
    public void freeNativeBuffer(ByteBuffer buffer) {
-      LibaioContext.freeBuffer(MemorySegment.ofBuffer(buffer));
+      LibaioContext.freeBuffer(buffer);
    }
 
    private static int calculateAlignment(File journalDir) {
@@ -297,7 +297,7 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
    public synchronized void releaseBuffer(final ByteBuffer buffer) {
       // resetting buffer offsets to original
       buffer.clear();
-      LibaioContext.freeBuffer(MemorySegment.ofBuffer(buffer));
+      LibaioContext.freeBuffer(buffer);
    }
 
    @Override
@@ -509,7 +509,7 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
          // if a buffer is bigger than the configured-bufferSize, we just create a new
          // buffer.
          if (size > getAlignedBufferSize()) {
-            return LibaioContext.newAlignedBuffer(size, getAlignment()).asByteBuffer();
+            return LibaioContext.newAlignedBuffer(size, getAlignment());
          } else {
             // We need to allocate buffers following the rules of the storage
             // being used (AIO/NIO)
@@ -526,7 +526,7 @@ public final class AIO2SequentialFileFactory extends AbstractSequentialFileFacto
 
             if (buffer == null) {
                // if empty create a new one.
-               buffer = LibaioContext.newAlignedBuffer(alignedSize, getAlignment()).asByteBuffer();
+               buffer = LibaioContext.newAlignedBuffer(alignedSize, getAlignment());
 
                buffer.limit(calculateBlockSize(size));
             } else {

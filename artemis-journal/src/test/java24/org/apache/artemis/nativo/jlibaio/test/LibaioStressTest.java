@@ -200,8 +200,7 @@ public class LibaioStressTest {
       LibaioFile fileDescriptor = control.openFile(file, true);
 
       // ByteBuffer buffer = ByteBuffer.allocateDirect(4096);
-      MemorySegment memorySegment = LibaioContext.newAlignedBuffer(4096, 4096);
-      ByteBuffer buffer = memorySegment.asByteBuffer();
+      ByteBuffer buffer = LibaioContext.newAlignedBuffer(4096, 4096);
 
       int maxSize = 4096 * LIBAIO_QUEUE_SIZE;
       fileDescriptor.fill(4096, maxSize);

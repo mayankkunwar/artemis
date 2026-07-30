@@ -34,10 +34,10 @@ public final class Constants {
    // set this to false if you want to stop using ring reaping
    static final boolean RING_REAPER = true;
 
-   static final int PERMISSION_MODE = 0666;
-   static final int O_RDWR = 0x0002;
-   static final int O_CREAT = 0x0040;
-   static final int O_DIRECT;
+   public static final int PERMISSION_MODE = 0666;
+   public static final int O_RDWR = 0x0002;
+   public static final int O_CREAT = 0x0040;
+   public static final int O_DIRECT;
 
    static final int LOCK_EX = 2;    // Exclusive lock
    static final int LOCK_NB = 4;    // Non-blocking lock
